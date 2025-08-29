@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>리오나</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="icon" href="icon/cs.ico" type="image/x-icon">
+</head>
+<body style="background:#161616;color:#fff;min-height:100vh;" class="hide-init">
+  <div class="video-background">
+    <video autoplay muted id="lineage3-video">
+      <source src="media/lineage3.mp4" type="video/mp4" />
+    </video>
+    <video autoplay muted loop id="lineage2-video">
+      <source src="media/lineage2.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="dashboard-card" style="opacity:0;display:none;width:100vw;height:100vh;max-width:none;max-height:none;margin:0;background:rgba(20,20,30,0.45);border-radius:0;box-shadow:none;padding:0;position:fixed;top:0;left:0;z-index:2;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;">
+      <div style="display:flex;align-items:center;gap:28px;">
+        <div style="width:80px;height:80px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px #03e9f4;overflow:hidden;">
+          <img id="profile-gender-img" src="images/monarch.png" alt="Profile" style="width:72px;height:72px;object-fit:cover;border-radius:50%;display:none;" />
+        </div>
+        <div>
+          <h2 style="font-size:2rem;font-weight:700;margin:0 0 8px 0;color:#fff;">Account Profile</h2>
+          <span style="font-size:1.1rem;color:#aaa;">Welcome to your dashboard</span>
+        </div>
+      </div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+        <li><a href="droplist.html" class="btn-animate transition" style="padding:8px 20px;border-radius:18px;background:#222;color:#fff;text-decoration:none;font-weight:bold;display:inline-block;">Drop List</a></li>
+        <li><a href="login.html" class="btn-animate transition" style="padding:8px 20px;border-radius:18px;background:#222;color:#fff;text-decoration:none;font-weight:bold;display:inline-block;">Logout</a></li>
+        <li><a href="index.html" class="btn-animate transition" style="padding:8px 20px;border-radius:18px;background:#222;color:#fff;text-decoration:none;font-weight:bold;display:inline-block;">Home</a></li>
+      </ul>
+    </div>
+    <div id="account-details" style="margin-bottom:32px;text-align:left;padding:18px 0 0 0;"></div>
+  </div>
+<script>
+  // Redirect to login if not logged in, and show message
+  (function() {
+    const accountData = JSON.parse(localStorage.getItem('accountData'));
+    const loginData = JSON.parse(localStorage.getItem('loginData'));
+    if (!accountData || !loginData || accountData.username !== loginData.username) {
+      document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;"><div style="background:rgba(20,20,30,0.85);padding:32px 48px;border-radius:18px;box-shadow:0 8px 32px #03e9f4;color:#fff;font-size:1.3rem;text-align:center;">You are not registered or not logged in.<br>Please register or log in first.</div></div>';
+      setTimeout(function() { window.location.href = 'login.html'; }, 3200);
+    }
+  })();
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Remove hide-init class to show content after loading
+    setTimeout(() => {
+      document.body.classList.remove('hide-init');
+    }, 1000);
+    
+    // Hide dashboard card and home button at start
+    const dashboardCard = document.querySelector('.dashboard-card');
+    const lineage3Video = document.getElementById('lineage3-video');
+    const lineage2Video = document.getElementById('lineage2-video');
+
+    if (dashboardCard) {
+      dashboardCard.style.opacity = '0';
+      dashboardCard.style.display = 'none';
+    }
+
+    if (lineage3Video && lineage2Video) {
+      lineage3Video.style.display = 'block';
+      lineage2Video.style.display = 'none';
+      setTimeout(() => {
+        lineage3Video.style.display = 'none';
+        lineage2Video.style.display = 'block';
+        lineage2Video.style.opacity = '0';
+        lineage2Video.style.transition = 'opacity 2s ease-in-out';
+        lineage2Video.style.opacity = '1';
+        setTimeout(() => {
+          if (dashboardCard) {
+            dashboardCard.style.display = '';
+            dashboardCard.style.opacity = '1';
+          }
+        }, 100); // Card appears after video switch
+      }, 4200);
+    }
+
+    // Fill account details
+    const accountData = JSON.parse(localStorage.getItem('accountData'));
+    const loginData = JSON.parse(localStorage.getItem('loginData'));
+    let detailsHtml = '';
+    if (accountData) {
+      let showPassword = false;
+      detailsHtml += `<table style='width:100%;border-collapse:separate;border-spacing:0 8px;'>`;
+      detailsHtml += `<tr><td style='color:#aaa;font-weight:500;padding:8px 0 8px 0;width:120px;'>Username:</td><td style='color:#fff;font-weight:700;padding:8px 0 8px 0;'>${accountData.username}</td></tr>`;
+      detailsHtml += `<tr><td style='color:#aaa;font-weight:500;padding:8px 0 8px 0;width:120px;'>Email:</td><td style='color:#fff;font-weight:700;padding:8px 0 8px 0;'>${accountData.email}</td></tr>`;
+      detailsHtml += `<tr><td style='color:#aaa;font-weight:500;padding:8px 0 8px 0;width:120px;'>Gender:</td><td style='color:#fff;font-weight:700;padding:8px 0 8px 0;'>${accountData.gender}</td></tr>`;
+      detailsHtml += `<tr><td style='color:#aaa;font-weight:500;padding:8px 0 8px 0;width:120px;'>Password:</td><td style='color:#fff;font-weight:700;padding:8px 0 8px 0;'><span id='password-value'>••••••••</span> <button id='toggle-password' style='margin-left:8px;padding:2px 10px;border-radius:8px;background:#03e9f4;color:#222;font-weight:bold;border:none;cursor:pointer;'>Show</button></td></tr>`;
+      detailsHtml += `<tr><td style='color:#aaa;font-weight:500;padding:8px 0 8px 0;width:120px;'>Registered At:</td><td style='color:#fff;font-weight:700;padding:8px 0 8px 0;'>${accountData.registeredAt}</td></tr>`;
+      detailsHtml += `</table>`;
+    } else if (loginData) {
+      detailsHtml += `<h2 style='margin-bottom:16px;'>Login Info</h2>`;
+      detailsHtml += `<div style='font-size:1.1em;text-align:left;display:inline-block;'>`;
+      detailsHtml += `<strong>Username/Email:</strong> ${loginData.usernameOrEmail}<br>`;
+      detailsHtml += `<strong>Password:</strong> ${loginData.password}<br>`;
+      detailsHtml += `</div>`;
+    } else {
+      detailsHtml += `<p>No account data found.</p>`;
+    }
+    document.getElementById('account-details').innerHTML = detailsHtml;
+    const passwordValue = document.getElementById('password-value');
+    const togglePassword = document.getElementById('toggle-password');
+    if (togglePassword && passwordValue) {
+      let shown = false;
+      togglePassword.addEventListener('click', function() {
+        shown = !shown;
+        if (shown) {
+          passwordValue.textContent = accountData.password;
+          togglePassword.textContent = 'Hide';
+        } else {
+          passwordValue.textContent = '••••••••';
+          togglePassword.textContent = 'Show';
+        }
+      });
+    }
+
+    // Set profile icon based on gender
+    const genderImg = document.getElementById('profile-gender-img');
+    if (genderImg && accountData) {
+      if (accountData.gender && accountData.gender.toLowerCase() === 'male') {
+        genderImg.src = 'images/monarch.png';
+        genderImg.style.display = 'block';
+      } else if (accountData.gender && accountData.gender.toLowerCase() === 'female') {
+        genderImg.src = 'images/princess.png';
+        genderImg.style.display = 'block';
+      } else {
+        genderImg.style.display = 'none';
+      }
+    }
+  });
+</script>
+</body>
+</html>

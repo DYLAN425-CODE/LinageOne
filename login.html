@@ -1,0 +1,205 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리오나</title>
+    <link rel="stylesheet" href="css/login.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="icon/cs.ico" type="image/x-icon">
+  </head>
+  <body>
+
+    <div class="video-background">
+      <video autoplay muted id="lineage3-video">
+        <source src="media/lineage3.mp4" type="video/mp4" />
+      </video>
+      <video autoplay muted loop id="lineage2-video">
+        <source src="media/lineage2.mp4" type="video/mp4" />
+
+      </video>
+    </div>
+
+    <div id="home-button-container" style="
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;">
+<a href="index.html" class="btn-animate transition">
+<span></span><span></span> <span></span><span></span
+>Home
+</a>
+</div>
+
+    <!-- Login Form Only -->
+    <div class="container">
+      <div class="register-card">
+        <div class="card-header">
+          <h1 class="title">Login to Account</h1>
+          <p class="subtitle">Welcome back, adventurer!</p>
+        </div>
+
+  <form method="POST" class="register-form">
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input 
+                type="text" 
+                name="username_email" 
+                id="username_email" 
+                placeholder="Username or Email" 
+                required 
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="Password" 
+                required 
+                class="form-input"
+              />
+              <i class="fas fa-eye-slash toggle-password" onclick="togglePassword('password')"></i>
+            </div>
+          </div>
+
+          <button type="submit" class="register-btn">
+            <span class="btn-text">Login</span>
+            <i class="fas fa-arrow-right btn-icon"></i>
+          </button>
+        </form>
+
+        <div class="login-link">
+          <p>Don't have an account? <a href="register.html" class="link">Sign Up</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Show registration success message if redirected from register
+      document.addEventListener('DOMContentLoaded', function () {
+        if (localStorage.getItem('registerSuccess') === 'true') {
+          let msg = document.createElement('div');
+          msg.id = 'register-success';
+          msg.style.background = 'rgba(0,255,0,0.12)';
+          msg.style.color = '#009900';
+          msg.style.padding = '10px 18px';
+          msg.style.borderRadius = '8px';
+          msg.style.margin = '12px 0';
+          msg.style.textAlign = 'center';
+          msg.textContent = 'Registration successful! You may now log in.';
+          const form = document.querySelector('.register-form');
+          if (form) form.parentNode.insertBefore(msg, form);
+          localStorage.removeItem('registerSuccess');
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Hide login form at start
+        const registerCard = document.querySelector('.register-card');
+        const homeButtonContainer = document.getElementById('home-button-container');
+
+        if (registerCard) {
+          registerCard.style.opacity = '0';
+          registerCard.style.display = 'none';
+        }
+
+        if (homeButtonContainer) {
+          homeButtonContainer.style.opacity = '0';
+          homeButtonContainer.style.display = 'none';
+        }
+
+        // Video background switching functionality
+        const lineage3Video = document.getElementById('lineage3-video');
+        const lineage2Video = document.getElementById('lineage2-video');
+
+        if (lineage3Video && lineage2Video) {
+          // Start with lineage3 video visible
+          lineage3Video.style.display = 'block';
+          lineage2Video.style.display = 'none';
+
+          // After 4.2 seconds, switch to lineage2 video and show form
+          setTimeout(() => {
+            lineage3Video.style.display = 'none';
+            lineage2Video.style.display = 'block';
+            lineage2Video.style.opacity = '0';
+            lineage2Video.style.transition = 'opacity 2s ease-in-out';
+            lineage2Video.style.opacity = '1';
+            setTimeout(() => {
+              if (registerCard) {
+                registerCard.style.display = '';
+                registerCard.style.opacity = '1';
+              }
+              if (homeButtonContainer) {
+                homeButtonContainer.style.display = '';
+                homeButtonContainer.style.opacity = '1';
+              }
+            }, 100);
+          }, 4200);
+        }
+
+        // Login form logic
+        const form = document.querySelector('.register-form');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = form.querySelector('[name="username_email"]').value.trim();
+            const password = form.querySelector('[name="password"]').value;
+            let accountData = JSON.parse(localStorage.getItem('accountData'));
+            if (!accountData || accountData.username !== username) {
+              showLoginError('No account found or not registered. Please register first.');
+              return;
+            }
+            if (accountData.password !== password) {
+              showLoginError('Incorrect password. Please try again.');
+              return;
+            }
+            // Save login data and redirect
+            localStorage.setItem('loginData', JSON.stringify({ username: username }));
+            window.location.href = 'dashboard.html';
+          });
+        }
+      });
+
+
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling;
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
+      }
+
+      function showLoginError(msg) {
+        let err = document.getElementById('login-error');
+        const form = document.querySelector('.register-form');
+        if (!err && form) {
+          err = document.createElement('div');
+          err.id = 'login-error';
+          err.style.background = 'rgba(255,0,0,0.15)';
+          err.style.color = '#ff3333';
+          err.style.padding = '10px 18px';
+          err.style.borderRadius = '8px';
+          err.style.margin = '12px 0';
+          err.style.textAlign = 'center';
+          form.parentNode.insertBefore(err, form);
+        }
+        if (err) err.textContent = msg;
+      }
+    </script>
+    <script src="js/login.js"></script>
+  </body>
+</html>

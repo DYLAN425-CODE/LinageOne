@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>리오나</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/index.css"/><link rel="icon" href="icon/cs.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const backgroundMusic = document.getElementById('background-music');
+    if (backgroundMusic) {
+      backgroundMusic.volume = 0.1; // Set volume to 10%
+    }
+    
+    // Music control functionality
+    const musicControl = document.getElementById('music-control');
+    if (musicControl && backgroundMusic) {
+      musicControl.addEventListener('click', function() {
+        if (backgroundMusic.paused) {
+          backgroundMusic.play();
+          musicControl.innerHTML = '<i class="fas fa-volume-up"></i>';
+        } else {
+          backgroundMusic.pause();
+          musicControl.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  #music-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+  
+  #music-control:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+</style>
+</head><body class="text-base md:text-lg hide-init">
+<audio id="background-music" autoplay >
+  <source src="media/lineage.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<div id="music-control">
+  <i class="fas fa-volume-up"></i>
+</div>
+<div class="video-background">
+  <video autoplay muted id="lineage3-video">
+    <source src="media/lineage3.mp4" type="video/mp4" />
+  </video>
+  <video autoplay muted loop id="lineage2-video">
+    <source src="media/lineage2.mp4" type="video/mp4" />
+  </video>
+</div>
+<div id="character-overlay" class="fixed top-0 left-0 w-full h-full z-0 flex items-center justify-center pointer-events-none"><img src="images/logo-lineage.png" alt="Lineage Logo" class="max-w-[400px] max-h-[400px] object-contain opacity-80 mt-[-240px]"/></div><header class="text-center py-10 fade-in"><h1 class="cinematic-title">리오나</h1><div class="mt-6 flex flex-wrap justify-center gap-4"><a href="login.html" class="btn-animate transition"></span><span></span><span></span><span></span><span></span>Login</a><a href="register.html" class="btn-animate transition" title="Register new account"><span></span><span></span><span></span><span></span>Register</a><a href="#" onclick="toggleForm('download')" class="btn-animate transition"><span></span><span></span><span></span><span></span>Download</a><a href="#" onclick="toggleForm('discord')" class="btn-animate transition"><span></span><span></span><span></span><span></span>Join Discord</a></div></header><div class="bg-black bg-opacity-0 px-4 md:px-8 flex flex-row items-start"><div class="flex flex-col"><section id="rules" class="w-48 p-3 rounded-lg z-50 fade-in border border-white/0"><h2 class="text-lg font-bold text-center text-red-700 mb-3">Server Rules</h2><div id="rulesContainer" class="h-40 overflow-hidden relative text-white rounded-lg p-4"><div><div id="ruleDisplay" class="text-sm text-white text-center"></div></div></div></section><section id="video-section" class="w-60 p-3 rounded-xl z-50 fade-in mt-2 mb-2"><div class="flex justify-center"><video id="introVideo" autoplay="" loop="" muted="" playsinline="" moz-playsinline="" class="w-3/8 rounded-lg"><source src="media/intro.mp4" type="video/mp4"/><source src="media2/intro.webm" type="video/webm"/><source src="media2/intro.ogg" type="video/ogg"/><source src="media2/intro.webp" type="video/webp"/>Your browser does not support the video tag.</video></div></section></div><div class="flex flex-row"><div class="max-w-7xl mx-auto"><section id="status" class="text-center py-6 fade-in"><h2 class="text-2xl font-semibold"></h2></section><section id="loginForm" class="flex items-start justify-center pt-10 hidden transition-all duration-100 ease-in-out"><div class="w-full max-w-sm p-6 bg-white/10 backdrop-transparent border border-white/30 rounded-lg shadow-lg fade-in"><h2 class="text-2xl font-bold mb-4 text-center text-white">Login</h2><form action="login.php" method="POST" class="space-y-4"><input type="text" name="username" placeholder="Username" required="" class="w-full p-3 rounded bg-transparent text-white border-2 border-gray-300 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition"/><input type="password" name="password" placeholder="Password" required="" class="w-full p-3 rounded bg-transparent text-white border-2 border-gray-300 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-green-400 transition"/><button type="submit" class="btn">Login</button></form></div></section><section id="registerForm" class="flex items-center justify-center hidden transition-all duration-100 ease-in-out"><div class="w-full max-w-sm p-6 bg-white/10 backdrop-transparent border border-white/30 rounded-lg shadow-lg fade-in"><h2 class="text-2xl font-bold mb-4 text-center text-white">Register</h2><form action="register.php" method="POST" class="space-y-4"><input type="text" name="username" placeholder="Username" required=""
+                  class="w-full p-3 rounded bg-transparent text-white border-2 border-gray-300 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  required=""
+                  class="w-full p-3 rounded bg-transparent text-white border-2 border-gray-300 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition"
+                />
+
+                <button type="submit" class="btn">Register</button>
+              </form>
+            </div>
+          </section>
+
+
+
+          <section
+            id="download"
+            class="text-center py-10 fade-in hidden transition-all duration-300 ease-in-out"
+          >
+            <h2 class="text-2xl font-bold mb-4 text-white">Download Game Client</h2>
+            <a
+              href="client/Genesis.rar"
+              download="Genesis.rar"
+              class="btn-animate transition download-animation"
+
+        <span></span><span></span>
+        <span></span><span></span>
+        Download Now
+      </a>
+          </section>
+
+          <section
+            id="discord"
+            class="text-center py-10 fade-in hidden transition-all duration-300 ease-in-out"
+          >
+            <h2 class="text-2xl font-bold mb-4 text-white">
+            Join our Discord Community
+            </h2>
+            <p class=" font-bold mb-4 text-white">
+              Get support, updates, and chat with fellow players.
+            </p>
+            <a
+              href="https://discord.gg/9eP4pJDW"
+              target="_blank" rel="noopener"
+              class="btn-animate transition"
+
+        <span></span><span></span>
+        <span></span><span></span>
+        Join Discord
+      </a>
+          </section>
+
+          <section class="mt-80 text-center px-4 py-8 text-cinematic-300 text-sm md:text-base">
+              <h2 class="cinematic-title">First ever large-scale RvR</h2>
+              <h2 class="cinematic-title cinematic-gradient">Castle Siege.</h2>
+              <p class="mt-6 text-lg max-w-2xl mx-auto fade-in"></p><p>
+               </p>               <p>This game was the first to introduce World Siege,</p>
+               <p>RvR content where guilds engage in large scale battles for control over castles.</p>
+               <p>Castle Siege,</p>
+               <p>where players enjoy the process of achieving a common goal by cooperating and overcoming opposition,</p>
+               <p>became the hallmark of Korean online MMORPGs.</p>
+               
+               <p>Leading the growth and development of Korean online games,</p>
+               <p>this game introduced new authentic systems and content,</p>
+               <p>including guilds led by a monarch,</p>
+               <p>a large scale battle called Castle Siege and the Weapon Reinforcement System,</p>
+               <p>which became the standard for numerous later MMORPGs.</p>
+            </section>
+
+          <footer class="text-center py-6 text-sm text-gray-400">
+            <!-- Footer: No preview images -->
+            <span class="cinematic-title">
+               2025 Game Server. All rights reserved.
+            </span>
+            <div class="mt-10">
+              <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="business" value="23badass001@gmail.com" />
+                <input type="hidden" name="no_recurring" value="0" />
+                <input type="hidden" name="item_name" value="Donation for Server Maintenance" />
+                <input type="hidden" name="currency_code" value="USD" />
+                <button type="submit" class="btn-animate transition">
+                  <span></span><span></span>
+                  <span></span><span></span>
+                  Donate with PayPal
+                </button>
+              </form>
+            </div>
+          </footer>
+        </div>
+      </div>
+
+
+      
+        
+
+      <script src="js/script.js"></script>
+      <!-- Top Rankings Section -->
+      <section id="ranking" class="absolute top-20 right-4 w-48 p-3 z-50 fade-in bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+        <h2 class="text-lg font-bold text-center text-red-700 mb-3">
+          Top Rankings
+        </h2>
+        <ol
+          class="list-decimal list-inside space-y-1 text-sm text-white"
+          id="topRankings"
+        >
+          <!-- Rankings will load here -->
+        </ol>
+        <p class="text-orange-700 text-xs text-center mt-2"
+          >System update in progress.</p
+        >
+        <p class="text-orange-700 text-xs text-center">Top Ranking is Temporarily disabled.</p>
+      </section>
+      
+      <!-- SERVER COUNTDOWN SET -->
+
+       <div class="row100">
+            <h3 class="cinematic-title top-center-h4">SERVER LAUNCH COUNTDOWN</h3>
+            <div class="time-counter cinematic-title">
+                <div class="counter">
+                    <span class="number Years">1</span>
+                    <span class="text">Years</span>
+                </div>
+                <div class="counter">
+                    <span class="number months">10</span>
+                    <span class="text">Months</span>
+                </div>
+                <div class="counter">
+                    <span class="number days">29</span>
+                    <span class="text">Days</span>
+                </div>
+                <div class="counter">
+                    <span class="number hours">03</span>
+                    <span class="text">Hours</span>
+                </div>
+                <div class="counter">
+                    <span class="number minutes">60</span>
+                    <span class="text">Minutes</span>
+                </div>
+                <div class="counter">
+                    <span class="number seconds">60</span>
+                    <span class="text">Seconds</span>
+                </div> 
+                
+            
+
+    </div>
+    <script src="js/index.js"></script>
+    <script>
+let serverNow = null;
+let lastFetch = 0;
+const targetDate = new Date('2025-12-31T23:59:59Z'); // UTC
+async function fetchServerTime() {
+  try {
+    const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+    const data = await res.json();
+    serverNow = new Date(data.utc_datetime);
+    lastFetch = Date.now();
+  } catch (e) {
+    serverNow = null;
+  }
+}
+function updateCountdown() {
+  if (!serverNow) return;
+  // Advance serverNow by elapsed ms since last fetch
+  const now = new Date(serverNow.getTime() + (Date.now() - lastFetch));
+  let diff = targetDate - now;
+  if (isNaN(diff) || diff < 0) {
+    document.querySelector('.Years').textContent = '-';
+    document.querySelector('.months').textContent = '-';
+    document.querySelector('.days').textContent = '-';
+    document.querySelector('.hours').textContent = '-';
+    document.querySelector('.minutes').textContent = '-';
+    document.querySelector('.seconds').textContent = '-';
+    document.getElementById('countdown-error')?.remove();
+    const err = document.createElement('div');
+    err.id = 'countdown-error';
+    err.textContent = 'Invalid time or countdown ended.';
+    err.style.color = 'red';
+    err.style.textAlign = 'center';
+    err.style.marginTop = '8px';
+    document.querySelector('.time-counter').appendChild(err);
+    return;
+  }
+  // Robust year/month/day calculation
+  let t = new Date(now);
+  let years = targetDate.getUTCFullYear() - t.getUTCFullYear();
+  let months = targetDate.getUTCMonth() - t.getUTCMonth();
+  let days = targetDate.getUTCDate() - t.getUTCDate();
+  let hours = targetDate.getUTCHours() - t.getUTCHours();
+  let minutes = targetDate.getUTCMinutes() - t.getUTCMinutes();
+  let seconds = targetDate.getUTCSeconds() - t.getUTCSeconds();
+  if (seconds < 0) { seconds += 60; minutes--; }
+  if (minutes < 0) { minutes += 60; hours--; }
+  if (hours < 0) { hours += 24; days--; }
+  if (days < 0) {
+    let prevMonth = new Date(targetDate.getUTCFullYear(), targetDate.getUTCMonth(), 0);
+    days += prevMonth.getUTCDate();
+    months--;
+  }
+  if (months < 0) { months += 12; years--; }
+  document.querySelector('.Years').textContent = years;
+  document.querySelector('.months').textContent = months;
+  document.querySelector('.days').textContent = days;
+  document.querySelector('.hours').textContent = hours;
+  document.querySelector('.minutes').textContent = minutes;
+  document.querySelector('.seconds').textContent = seconds;
+  document.getElementById('countdown-error')?.remove();
+}
+fetchServerTime();
+setInterval(updateCountdown, 1000);
+setInterval(fetchServerTime, 60000); // Refresh server time every minute
+</script>
+  </body>
+</html>

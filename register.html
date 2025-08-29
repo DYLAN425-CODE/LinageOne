@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리오나</title>
+    <link rel="stylesheet" href="css/register.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/RegAnimation.css" />
+    <link rel="icon" href="icon/cs.ico" type="image/x-icon">
+  </head>
+  <body>
+
+    <div class="video-background">
+      <video autoplay muted id="lineage3-video">
+        <source src="media/lineage3.mp4" type="video/mp4" />
+      </video>
+      <video autoplay muted loop id="lineage2-video">
+        <source src="media/lineage2.mp4" type="video/mp4" />
+
+      </video>
+    </div>
+
+    <div id="home-button-container" style="
+    position: absolute;
+    bottom: -260px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;">
+<a href="index.html" class="btn-animate transition">
+<span></span><span></span> <span></span><span></span
+>Home
+</a>
+</div>
+
+    <!-- Register Form Only -->
+    <div class="container">
+      <div class="register-card">
+        <div class="card-header">
+          <h1 class="title">Create Account</h1>
+          <p class="subtitle">Join the world of adventure</p>
+        </div>
+
+  <form method="POST" class="register-form">
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-user input-icon"></i>
+              <input 
+                type="text" 
+                name="username" 
+                id="username" 
+                placeholder="Username" 
+                required 
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Remove or comment out the email address field in the form -->
+          <!-- <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-envelope input-icon"></i>
+              <input 
+                type="email" 
+                name="email" 
+                id="email" 
+                placeholder="Email Address" 
+                required 
+                class="form-input"
+              />
+            </div>
+          </div> -->
+
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-venus-mars input-icon"></i>
+              <select name="gender" id="gender" required class="form-input">
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                placeholder="Password" 
+                required 
+                class="form-input"
+              />
+              <i class="fas fa-eye-slash toggle-password" onclick="togglePassword('password')"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input 
+                type="password" 
+                name="confirm_password" 
+                id="confirm_password" 
+                placeholder="Confirm Password" 
+                required 
+                class="form-input"
+              />
+              <i class="fas fa-eye-slash toggle-password" onclick="togglePassword('confirm_password')"></i>
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" name="terms" required class="checkbox-input">
+              <span class="checkmark"></span>
+              <span class="checkbox-text">I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+            </label>
+          </div>
+
+          <button type="submit" class="register-btn">
+            <span class="btn-text">Create Account</span>
+            <i class="fas fa-arrow-right btn-icon"></i>
+          </button>
+        </form>
+
+        <div class="login-link">
+          <p>Already have an account? <a href="login.html" class="link">Sign In</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Hide register form at start
+        const registerCard = document.querySelector('.register-card');
+        const homeButtonContainer = document.getElementById('home-button-container');
+
+        if (registerCard) {
+          registerCard.style.opacity = '0';
+          registerCard.style.display = 'none';
+        }
+
+        if (homeButtonContainer) {
+          homeButtonContainer.style.opacity = '0';
+          homeButtonContainer.style.display = 'none';
+        }
+
+        // Video background switching functionality
+        const lineage3Video = document.getElementById('lineage3-video');
+        const lineage2Video = document.getElementById('lineage2-video');
+
+        if (lineage3Video && lineage2Video) {
+          // Start with lineage3 video visible
+          lineage3Video.style.display = 'block';
+          lineage2Video.style.display = 'none';
+
+          // After 3 seconds, switch to lineage2 video and show form
+          setTimeout(() => {
+
+            // First video disappears instantly, second video fades in
+            lineage3Video.style.display = 'none';
+            lineage2Video.style.display = 'block';
+            lineage2Video.style.opacity = '0';
+            lineage2Video.style.transition = 'opacity 2s ease-in-out';
+            lineage2Video.style.opacity = '1';
+            
+            // Show register form
+            setTimeout(() => {
+
+              if (registerCard) {
+                registerCard.style.display = '';
+                registerCard.style.opacity = '1';
+              }
+              if (homeButtonContainer) {
+                homeButtonContainer.style.display = '';
+                homeButtonContainer.style.opacity = '1';
+              }
+            
+            }, 100); // Form appears 10ms after video switch
+          }, 4200);
+        }
+      });
+
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling;
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('.register-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = form.querySelector('[name="username"]')?.value.trim();
+    // Check for existing account
+    let accountData = JSON.parse(localStorage.getItem('accountData'));
+    if (accountData && accountData.username === username) {
+      showRegisterError('Username already exists. Please choose another.', form);
+      return;
+    }
+    // Save account without email
+    accountData = {
+      username: username,
+      gender: form.querySelector('[name="gender"]')?.value,
+      password: form.querySelector('[name="password"]')?.value,
+      registeredAt: new Date().toLocaleString()
+    };
+    localStorage.setItem('accountData', JSON.stringify(accountData));
+    localStorage.setItem('registerSuccess', 'true');
+    window.location.href = 'login.html';
+  });
+});
+function showRegisterError(msg, form) {
+  let err = document.getElementById('register-error');
+  if (!err) {
+    err = document.createElement('div');
+    err.id = 'register-error';
+    err.style.background = 'rgba(255,0,0,0.15)';
+    err.style.color = '#ff3333';
+    err.style.padding = '10px 18px';
+    err.style.borderRadius = '8px';
+    err.style.margin = '12px 0';
+    err.style.textAlign = 'center';
+    form.parentNode.insertBefore(err, form);
+  }
+  err.textContent = msg;
+}
+    </script>
+  </body>
+</html>
+

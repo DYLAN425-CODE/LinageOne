@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리오나</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="icon/cs.ico" type="image/x-icon">
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        color: rgb(47, 243, 8);
+        height: 100%;
+        overflow: hidden;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .pagination button {
+        padding: 8px 16px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: rgb(9, 206, 255);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .pagination button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #video-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+      }
+
+        .container {
+          width: 100%;
+          max-width: 100%;
+          margin: 0 auto;
+          background-color: none;
+          padding: 32px 0 0 0;
+          border-radius: 0;
+          overflow: visible;
+          position: relative;
+        }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      #search {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        background-color: transparent;
+        border: 1px solid rgba(7, 252, 68, 0.5);
+        color: white;
+      }
+
+      .droplist-container {
+        height: calc(100vh - 180px);
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 0 0 0;
+        overflow-x: hidden;
+      }
+
+      .droplist-container::-webkit-scrollbar {
+        width: 20px;
+      }
+
+      .droplist-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+
+      .droplist-container::-webkit-scrollbar-thumb {
+        background: rgba(241, 2, 221, 0.5);
+        border-radius: 10px;
+      }
+
+      .droplist-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(7, 252, 68, 0.7);
+      }
+
+      table {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        overflow-x: unset;
+        display: table;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba(7, 252, 68, 0.05);
+        font-size: 14px;
+      }
+
+      th {
+  background-color: rgba(20,20,30,0.85);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body class="hide-init">
+    <video id="video-background" autoplay loop muted playsinline>
+      <source src="media/droplist.mp4" type="video/mp4" />
+      <source src="media/droplist.webm" type="video/webm" />
+      <source src="media/droplist.ogg" type="video/ogg" />
+      <source src="media/droplist.webp" type="video/webp" />
+      Your browser does not support the video tag
+    </video>
+    <script>
+      // Remove hide-init class to show content after loading
+      document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+          document.body.classList.remove('hide-init');
+        }, 1000);
+      });
+      
+      // Fallback for Firefox which doesn't support playsinline
+      if (navigator.userAgent.includes("Firefox")) {
+        const video = document.getElementById("video-background");
+        video.removeAttribute("playsinline");
+        video.setAttribute("webkit-playsinline", "");
+        video.setAttribute("x-webkit-airplay", "allow");
+      }
+    </script>
+
+    <div class="container">
+      <input type="text" id="search" placeholder="Search items or mobs..." />
+      <div id="search-page-info" style="color:#03e9f4;font-weight:bold;margin-bottom:8px;text-align:left;"></div>
+      <div class="droplist-container">
+        <table id="droplist">
+          <thead>
+            <tr>
+              <th class="droplist-cinematic-header">MOB NAME</th>
+              <th class="droplist-cinematic-header">MOB LEVEL</th>
+              <th class="droplist-cinematic-header">ITEM NAME</th>
+              <th class="droplist-cinematic-header">MIN</th>
+              <th class="droplist-cinematic-header">MAX</th>
+              <th class="droplist-cinematic-header">CHANCE</th>
+              <th class="droplist-cinematic-header">ENCHANT</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  <!-- BACK button is now only in pagination bar -->
+
+    <script>
+      // Function to load mob data from file
+      async function loadMobData() {
+        try {
+          const [
+            mobResponse,
+            levelResponse,
+            itemResponse,
+            minResponse,
+            maxResponse,
+            chanceResponse,
+            enchantResponse,
+          ] = await Promise.all([
+            fetch("droplist_txt/mob.txt"),
+            fetch("droplist_txt/moblevel.txt"),
+            fetch("droplist_txt/itemname.txt"),
+            fetch("droplist_txt/min.txt"),
+            fetch("droplist_txt/max.txt"),
+            fetch("droplist_txt/chance.txt"),
+            fetch("droplist_txt/enchant.txt"),
+          ]);
+
+          const mobs = (await mobResponse.text())
+            .split("\n")
+            .filter((mob) => mob.trim() !== "");
+          const levels = (await levelResponse.text())
+            .split("\n")
+            .filter((level) => level.trim() !== "");
+          const items = (await itemResponse.text())
+            .split("\n")
+            .filter((item) => item.trim() !== "");
+          const mins = (await minResponse.text())
+            .split("\n")
+            .filter((min) => min.trim() !== "");
+          const maxs = (await maxResponse.text())
+            .split("\n")
+            .filter((max) => max.trim() !== "");
+          const chances = (await chanceResponse.text())
+            .split("\n")
+            .filter((chance) => chance.trim() !== "");
+          const enchants = (await enchantResponse.text())
+            .split("\n")
+            .filter((enchant) => enchant.trim() !== "");
+
+          // Process data into table format
+          const tableData = mobs.map((mob, index) => ({
+            mobName: mob,
+            mobLevel: levels[index] || 0,
+            itemName: items[index] || "",
+            min: mins[index] || 0,
+            max: maxs[index] || 0,
+            chance: chances[index] || "0%",
+            enchant: enchants[index] || 0,
+          }));
+
+          return tableData;
+        } catch (error) {
+          console.error("Error loading mob data:", error);
+          return [];
+        }
+      }
+
+      // Function to load data into the table
+      function loadData(data) {
+        const tbody = document.querySelector("#droplist tbody");
+        tbody.innerHTML = "";
+
+        // Display all items
+        const fragment = document.createDocumentFragment();
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${item.mobName}</td>
+                    <td>${item.mobLevel}</td>
+                    <td>${item.itemName}</td>
+                    <td>${item.min}</td>
+                    <td>${item.max}</td>
+                    <td class="${
+                      parseFloat(item.chance) >= 25 &&
+                      parseFloat(item.chance) <= 30
+                        ? "orange-chance"
+                        : parseFloat(item.chance) >= 0 &&
+                          parseFloat(item.chance) <= 24
+                        ? "low-chance"
+                        : ""
+                    }">${Math.min(
+            100,
+            Math.round(parseFloat(item.chance))
+          )}%</td>
+                    <td>${item.enchant}</td>
+                `;
+          fragment.appendChild(row);
+        });
+        tbody.appendChild(fragment);
+      }
+
+      // Pagination variables
+      let currentPage = 1;
+      const itemsPerPage = 2000;
+      let allData = [];
+
+      // Function to display paginated data
+      function displayPaginatedData(page) {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedData = allData.slice(startIndex, endIndex);
+        loadData(paginatedData);
+        updatePageNumberDisplay();
+      }
+
+      // Navigation buttons functionality
+      function setupPaginationButtons() {
+  const paginationDiv = document.createElement("div");
+  paginationDiv.className = "pagination";
+  paginationDiv.style.margin = "32px auto 0 auto";
+  paginationDiv.style.display = "flex";
+  paginationDiv.style.justifyContent = "center";
+  paginationDiv.style.alignItems = "center";
+  paginationDiv.style.gap = "18px";
+  paginationDiv.style.width = "fit-content";
+  paginationDiv.style.position = "relative";
+
+        const prevButton = document.createElement("button");
+        prevButton.textContent = "Previous";
+  prevButton.style.padding = "14px 32px";
+  prevButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  prevButton.style.color = "rgb(9, 206, 255)";
+  prevButton.style.border = "none";
+  prevButton.style.borderRadius = "10px";
+  prevButton.style.cursor = "pointer";
+  prevButton.style.transition = "background-color 0.3s";
+  prevButton.style.fontWeight = "bold";
+  prevButton.style.fontSize = "1em";
+        prevButton.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            displayPaginatedData(currentPage);
+            updatePageNumberDisplay();
+          }
+        });
+
+        const pageNumberSpan = document.createElement("span");
+        pageNumberSpan.id = "page-number";
+        pageNumberSpan.style.margin = "0 10px";
+        pageNumberSpan.style.color = "white";
+        pageNumberSpan.style.fontSize = "1.2em";
+
+        const nextButton = document.createElement("button");
+        nextButton.textContent = "Next";
+  nextButton.style.padding = "14px 32px";
+  nextButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  nextButton.style.color = "rgb(9, 206, 255)";
+  nextButton.style.border = "none";
+  nextButton.style.borderRadius = "10px";
+  nextButton.style.cursor = "pointer";
+  nextButton.style.transition = "background-color 0.3s";
+  nextButton.style.fontWeight = "bold";
+  nextButton.style.fontSize = "1em";
+        nextButton.addEventListener("click", () => {
+          if (currentPage * itemsPerPage < allData.length) {
+            currentPage++;
+            displayPaginatedData(currentPage);
+            updatePageNumberDisplay();
+          }
+        });
+
+        // BACK button styled same as pagination
+        const backButton = document.createElement("a");
+        backButton.href = "dashboard.html";
+        backButton.textContent = "BACK";
+  backButton.style.padding = "14px 32px";
+  backButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  backButton.style.color = "rgb(9, 206, 255)";
+  backButton.style.border = "none";
+  backButton.style.borderRadius = "10px";
+  backButton.style.cursor = "pointer";
+  backButton.style.transition = "background-color 0.3s";
+  backButton.style.textDecoration = "none";
+  backButton.style.fontWeight = "bold";
+  backButton.style.fontSize = "1em";
+
+        paginationDiv.appendChild(prevButton);
+        paginationDiv.appendChild(pageNumberSpan);
+        paginationDiv.appendChild(nextButton);
+        paginationDiv.appendChild(backButton);
+        document.querySelector(".container").appendChild(paginationDiv);
+      }
+
+      // Initial load
+      loadMobData().then((data) => {
+        allData = data;
+        setupPaginationButtons();
+        displayPaginatedData(currentPage);
+        updatePageNumberDisplay();
+      });
+
+      function updatePageNumberDisplay() {
+        const pageNumberSpan = document.getElementById("page-number");
+        if (pageNumberSpan) {
+          const totalPages = Math.ceil(allData.length / itemsPerPage);
+          pageNumberSpan.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+      }
+
+      // Debounce function to limit how often a function is called
+      function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+          const context = this;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+      }
+
+      // Update search to auto-jump to page of first match, no filtering
+      document.getElementById("search").addEventListener(
+        "input",
+        debounce(function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const infoDiv = document.getElementById('search-page-info');
+          if (searchTerm === "") {
+            displayPaginatedData(currentPage);
+            // Show page info when not searching
+            const pageNum = currentPage;
+            infoDiv.textContent = `You are on page ${pageNum}`;
+            // Remove highlight
+            setTimeout(() => {
+              const rows = document.querySelectorAll('#droplist tbody tr');
+              rows.forEach((row) => {
+                row.style.backgroundColor = '';
+              });
+            }, 10);
+            return;
+          }
+
+          // Find index of first match in allData
+          let firstMatchIndex = -1;
+          for (let i = 0; i < allData.length; i++) {
+            if (
+              allData[i].mobName.toLowerCase().includes(searchTerm) ||
+              allData[i].mobLevel.toLowerCase().includes(searchTerm) ||
+              allData[i].itemName.toLowerCase().includes(searchTerm)
+            ) {
+              firstMatchIndex = i;
+              break;
+            }
+          }
+          if (firstMatchIndex !== -1) {
+            currentPage = Math.floor(firstMatchIndex / itemsPerPage) + 1;
+            displayPaginatedData(currentPage);
+            updatePageNumberDisplay();
+            infoDiv.textContent = `First match is on page ${currentPage}`;
+            // Highlight all matches on the page
+            setTimeout(() => {
+              const rows = document.querySelectorAll('#droplist tbody tr');
+              rows.forEach((row, idx) => {
+                const item = allData[(currentPage - 1) * itemsPerPage + idx];
+                if (item && (
+                  item.mobName.toLowerCase().includes(searchTerm) ||
+                  item.mobLevel.toLowerCase().includes(searchTerm) ||
+                  item.itemName.toLowerCase().includes(searchTerm)
+                )) {
+                  row.style.backgroundColor = 'rgba(7,252,68,0.18)';
+                } else {
+                  row.style.backgroundColor = '';
+                }
+              });
+            }, 10);
+          } else {
+            // No match, show current page and remove highlight
+            displayPaginatedData(currentPage);
+            infoDiv.textContent = "No match found.";
+            setTimeout(() => {
+              const rows = document.querySelectorAll('#droplist tbody tr');
+              rows.forEach((row) => {
+                row.style.backgroundColor = '';
+              });
+            }, 10);
+          }
+        }, 300)
+      ); // 300ms delay
+    </script>
+  </body>
+</html>
